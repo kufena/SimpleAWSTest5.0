@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Amazon.Extensions.Configuration.SystemsManager;
 
 namespace SimpleAWSTest5._0API
 {
@@ -20,7 +21,10 @@ namespace SimpleAWSTest5._0API
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    //webBuilder.AddSystemsManager("/development");
                     webBuilder.UseStartup<Startup>();
+
                 });
+           
     }
 }

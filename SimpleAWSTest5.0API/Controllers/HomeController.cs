@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using SimpleAWSTest5._0API.Utils;
 
-namespace SimpleAWSTestAPI.Controllers
+namespace SimpleAWSTest5._0API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

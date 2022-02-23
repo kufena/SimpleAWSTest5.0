@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Amazon.Extensions.Configuration.SystemsManager;
+using SimpleAWSTest5._0API.Utils;
 
 namespace SimpleAWSTest5._0API
 {
@@ -26,7 +28,8 @@ namespace SimpleAWSTest5._0API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.Configure<Parameters>(Configuration.GetSection("Parameters"));
+            //Configuration.AddSystemsManager("");
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -43,7 +46,7 @@ namespace SimpleAWSTest5._0API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "SimpleAWSTest5._0API v1"));
             }
-
+            
             app.UseHttpsRedirection();
 
             app.UseRouting();
