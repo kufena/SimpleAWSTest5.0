@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      dotnet: 5.0
+
+#  pre_build:
+#    commands:
+#      - dotnet restore 
+  
+  build:
+    commands:
+      - which dotnet
+      - echo Build started on `date`
+      - cd SimpleAWSTest5.0API && dotnet build
+
+artifacts:
+  files:
+    - ./SimpleAWSTest5.0API/**/*
