@@ -18,10 +18,13 @@ namespace SimpleAWSTest5._0API
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
+            Host.CreateDefaultBuilder(args).ConfigureAppConfiguration((context, config) =>
+                {
+                    var environment = context.HostingEnvironment.EnvironmentName.ToLower();
+                    config.AddSystemsManager($"/{environment}");
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    //webBuilder.AddSystemsManager("/development");
                     webBuilder.UseStartup<Startup>();
 
                 });
