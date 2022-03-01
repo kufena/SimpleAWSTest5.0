@@ -1,0 +1,11 @@
+#!/bin/bash
+echo "starting script..."
+sudo yum update -y
+sudo yum install -y ruby
+curl -O https://aws-codedeploy-eu-west-2.s3.amazonaws.com/latest/install
+sudo chmod a+x ./install
+sudo ./install auto
+sudo service codedeploy-agent status
+
+sudo rpm -Uvh https://packages.microsoft.com/config/centos/7/packages-microsoft-prod.rpm
+sudo yum install -y dotnet-sdk-5.0
