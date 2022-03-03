@@ -1,0 +1,13 @@
+
+
+aws ec2 create-vpc --cidr-block 10.0.0.0/24 --tag-specification ResourceType=vpc,Tags='[{Key=Name,Value="SimpleAWSTestVPC"}]'
+
+aws ec2 create-subnet --vpc-id vpc-02291809eb31e3f36 --availability-zone eu-west-2a --cidr-block 10.0.0.0/26 --tag-specifications ResourceType=subnet,Tags='[{Key=Name,Value="SimpleAWSTestSubnet1"}]'
+
+aws ec2 create-subnet --vpc-id vpc-02291809eb31e3f36 --availability-zone eu-west-2a --cidr-block 10.0.0.64/26 --tag-specifications ResourceType=subnet,Tags='[{Key=Name,Value="SimpleAWSTestSubnet2"}]'
+
+aws ec2 create-subnet --vpc-id vpc-02291809eb31e3f36 --availability-zone eu-west-2b --cidr-block 10.0.0.128/26 --tag-specifications ResourceType=subnet,Tags='[{Key=Name,Value="SimpleAWSTestSubnet3"}]'
+
+aws ec2 modify-subnet-attribute --subnet-id subnet-0be10e19678667884 --map-public-ip-on-launch=true
+
+
