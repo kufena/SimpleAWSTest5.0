@@ -1,0 +1,68 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Resources": {
+        "SimpleAWSTestVPC": {
+            "Type": "AWS::EC2::VPC",
+            "Properties": {
+                "CidrBlock": "10.0.0.0/24",
+                "Tags": [ {"Key":"Name", "Value":"SimpleAWSTestVPC"}]
+            }
+        },
+
+        "SimpleAWSTestPublicSubnet1": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "VpcId": { "Ref" : "SimpleAWSTestVPC" },
+                "CidrBlock" : "10.0.0.0/26",
+                "MapPublicIpOnLaunch": "True",
+                "Tags":[ {"Key":"Name", "Value":"SimpleAWSTestPublicSubnet1"}]
+            }
+        },
+
+        "SimpleAWSTestInternetGateway": {
+            "Type": "AWS::EC2::InternetGateway",
+            "Properties":{
+            }
+        },
+
+        "SimpleAWSTestInternetGatewayAttachment": {
+            "Type": "AWS::EC2::VPCGatewayAttachment",
+            "Properties": {
+                "VpcId": {"Ref":"SimpleAWSTestVPC"},
+                "InternetGatewayId":{"Ref":"SimpleAWSTestInternetGateway"}
+            }
+        },
+
+        "SimpleAWSTestRouteTable": {
+            "Type":"AWS::EC2::RouteTable",
+            "Properties": {
+                "VpcId": {"Ref" : "SimpleAWSTestVPC"}
+            }
+        },
+
+        "SimpleAWSTestPublicRoute": {
+            "Type": "AWS::EC2::Route",
+            "Properties": {
+                "RouteTableId": {"Ref":"SimpleAWSTestRouteTable"},
+                "DestinationCidrBlock":"0.0.0.0/0",
+                "GatewayId":{"Ref":"SimpleAWSTestInternetGateway"}
+            }
+        },
+
+        "SimpleAWSTestSubnet1RouteTableAssociation": {
+            "Type":"AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {"Ref" : "SimpleAWSTestPublicSubnet1"},
+                "RouteTableId": {"Ref":"SimpleAWSTestRouteTable"}
+            }
+        },
+
+        "SimpleAWSTestGatewayRouteTableAssociation": {
+            "Type": "AWS::EC2::GatewayRouteTableAssociation",
+            "Properties":{
+                "GatewayId": {"Ref":"SimpleAWSTestInternetGateway"},
+                "RouteTableId": {"Ref":"SimpleAWSTestRouteTable"}
+            }
+        }
+    }
+}
