@@ -1,0 +1,368 @@
+{
+  "Resources": {
+    "SimpleAWSTestVPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.0.0.0/24"
+      },
+      "Metadata": {
+        "aws:cdk:path": "SimpleAwsTestCdkIaCStack/SimpleAWSTestVPC"
+      }
+    },
+    "SimpleAWSTestPublicSubnet1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.0.0/26",
+        "VpcId": {
+          "Ref": "SimpleAWSTestVPC"
+        },
+        "AvailabilityZone": "eu-west-2a",
+        "MapPublicIpOnLaunch": true
+      },
+      "Metadata": {
+        "aws:cdk:path": "SimpleAwsTestCdkIaCStack/SimpleAWSTestPublicSubnet1"
+      }
+    },
+    "SimpleAWSTestPublicSubnet2": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.0.64/26",
+        "VpcId": {
+          "Ref": "SimpleAWSTestVPC"
+        },
+        "AvailabilityZone": "eu-west-2b",
+        "MapPublicIpOnLaunch": true
+      },
+      "Metadata": {
+        "aws:cdk:path": "SimpleAwsTestCdkIaCStack/SimpleAWSTestPublicSubnet2"
+      }
+    },
+    "SimpleAWSTestIGW": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Metadata": {
+        "aws:cdk:path": "SimpleAwsTestCdkIaCStack/SimpleAWSTestIGW"
+      }
+    },
+    "SimpleAWSTestVPCIgwAttach": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "SimpleAWSTestVPC"
+        },
+        "InternetGatewayId": {
+          "Fn::GetAtt": [
+            "SimpleAWSTestIGW",
+            "InternetGatewayId"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "SimpleAwsTestCdkIaCStack/SimpleAWSTestVPCIgwAttach"
+      }
+    },
+    "SimpleAWSTestRouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "SimpleAWSTestVPC"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "SimpleAwsTestCdkIaCStack/SimpleAWSTestRouteTable"
+      }
+    },
+    "SimpleAWSTestPublicSubnetRoute": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Fn::GetAtt": [
+            "SimpleAWSTestRouteTable",
+            "RouteTableId"
+          ]
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Fn::GetAtt": [
+            "SimpleAWSTestIGW",
+            "InternetGatewayId"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "SimpleAwsTestCdkIaCStack/SimpleAWSTestPublicSubnetRoute"
+      }
+    },
+    "SubnetRouteTableAssoc1": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Fn::GetAtt": [
+            "SimpleAWSTestRouteTable",
+            "RouteTableId"
+          ]
+        },
+        "SubnetId": {
+          "Ref": "SimpleAWSTestPublicSubnet1"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "SimpleAwsTestCdkIaCStack/SubnetRouteTableAssoc1"
+      }
+    },
+    "SubnetRouteTableAssoc2": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Fn::GetAtt": [
+            "SimpleAWSTestRouteTable",
+            "RouteTableId"
+          ]
+        },
+        "SubnetId": {
+          "Ref": "SimpleAWSTestPublicSubnet2"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "SimpleAwsTestCdkIaCStack/SubnetRouteTableAssoc2"
+      }
+    },
+    "CDKMetadata": {
+      "Type": "AWS::CDK::Metadata",
+      "Properties": {
+        "Analytics": "v2:deflate64:H4sIAAAAAAAA/0WMzQ6CMBCEn4U7LD/GoweCxnghBghXU8oaK9CSdpEY4rtbwEj2MDM7XyaCcA+Bw0bj8brxWlHBlBPjjWtfN+QRTMldltfEtZIPlUSa3UUSauvPjHBkb3dlfikmO/DoUC5opgbCglUt/tO2tZWxMYoLRkLJzwKiUYPmC5soWYu1OSpKkfwdhBAFPqSnIlEa4773StTGIoeX7fwQgvmcpxHC04Mk0SFkq34BdMI+CfMAAAA="
+      },
+      "Metadata": {
+        "aws:cdk:path": "SimpleAwsTestCdkIaCStack/CDKMetadata/Default"
+      },
+      "Condition": "CDKMetadataAvailable"
+    }
+  },
+  "Conditions": {
+    "CDKMetadataAvailable": {
+      "Fn::Or": [
+        {
+          "Fn::Or": [
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "af-south-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "ap-east-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "ap-northeast-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "ap-northeast-2"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "ap-south-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "ap-southeast-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "ap-southeast-2"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "ca-central-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "cn-north-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "cn-northwest-1"
+              ]
+            }
+          ]
+        },
+        {
+          "Fn::Or": [
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "eu-central-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "eu-north-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "eu-south-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "eu-west-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "eu-west-2"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "eu-west-3"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "me-south-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "sa-east-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "us-east-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "us-east-2"
+              ]
+            }
+          ]
+        },
+        {
+          "Fn::Or": [
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "us-west-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "us-west-2"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

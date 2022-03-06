@@ -1,0 +1,124 @@
+{
+  "version": "16.0.0",
+  "artifacts": {
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    },
+    "SimpleAwsTestCdkIaCStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "SimpleAwsTestCdkIaCStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "SimpleAwsTestCdkIaCStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "SimpleAwsTestCdkIaCStack.template.json",
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c381c1cab878570c4ff1f78ccc1ad7b32c74bcc1b75a87319522d838af3f9513.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "SimpleAwsTestCdkIaCStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "SimpleAwsTestCdkIaCStack.assets"
+      ],
+      "metadata": {
+        "/SimpleAwsTestCdkIaCStack/SimpleAWSTestVPC": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SimpleAWSTestVPC"
+          }
+        ],
+        "/SimpleAwsTestCdkIaCStack/SimpleAWSTestPublicSubnet1": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SimpleAWSTestPublicSubnet1"
+          }
+        ],
+        "/SimpleAwsTestCdkIaCStack/SimpleAWSTestPublicSubnet2": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SimpleAWSTestPublicSubnet2"
+          }
+        ],
+        "/SimpleAwsTestCdkIaCStack/SimpleAWSTestIGW": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SimpleAWSTestIGW"
+          }
+        ],
+        "/SimpleAwsTestCdkIaCStack/SimpleAWSTestVPCIgwAttach": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SimpleAWSTestVPCIgwAttach"
+          }
+        ],
+        "/SimpleAwsTestCdkIaCStack/SimpleAWSTestRouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SimpleAWSTestRouteTable"
+          }
+        ],
+        "/SimpleAwsTestCdkIaCStack/SimpleAWSTestPublicSubnetRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SimpleAWSTestPublicSubnetRoute"
+          }
+        ],
+        "/SimpleAwsTestCdkIaCStack/SubnetRouteTableAssoc1": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubnetRouteTableAssoc1"
+          }
+        ],
+        "/SimpleAwsTestCdkIaCStack/SubnetRouteTableAssoc2": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubnetRouteTableAssoc2"
+          }
+        ],
+        "/SimpleAwsTestCdkIaCStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/SimpleAwsTestCdkIaCStack/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/SimpleAwsTestCdkIaCStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/SimpleAwsTestCdkIaCStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "SimpleAwsTestCdkIaCStack"
+    }
+  }
+}
