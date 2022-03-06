@@ -57,11 +57,20 @@
             }
         },
 
-        "SimpleAWSTestGatewayRouteTableAssociation": {
-            "Type": "AWS::EC2::GatewayRouteTableAssociation",
+        "SimpleAWSTestSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
             "Properties":{
-                "GatewayId": {"Ref":"SimpleAWSTestInternetGateway"},
-                "RouteTableId": {"Ref":"SimpleAWSTestRouteTable"}
+                "GroupName":"SimpleAWSTestSecurityGroup",
+                "GroupDescription":"A simple security group attached to our VPC",
+                "VpcId": {"Ref":"SimpleAWSTestVPC"},
+                "SecurityGroupIngress": [
+                    {
+                        "CidrIp":"0.0.0.0/0",
+                        "IpProtocol": "tcp",
+                        "FromPort":"22",
+                        "ToPort":"22"
+                    }
+                ]
             }
         }
     }
