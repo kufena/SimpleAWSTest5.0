@@ -22,3 +22,19 @@ This is all so we can use CodeDeploy to deploy the SimpleAWSTest application.
 
 As I have already pointed out, there is no obvious dependence between the second and
 third stack, but there is because of ordering.  I'm not sure how to make that explicit.
+
+So, the main three files in here are:
+
+  - VPCInfrastructure.json
+  - SGConfigurationDeploymentInfrastructure.json
+  - EC2DeployInfrastructure.json
+
+Some other files in this folder are:
+
+  - clicmd.txt contains some AWS CLI commands I've used to create things,
+  - CodeDeployServiceRole.yml and PoliciesAndRoles.txt was an attempt to document some policies and roles required for CodeDeploy/CodeBuild
+  - LoadBalancedEC2Instances.yml was an aborted attempt at CloudFormation in YAML,
+  - userdata.txt contains some commands to install .NET 5.0 and the CodeDeploy agent on an instance.  This could have been used in the LaunchConfiguration, but in the end I created a new AIM.
+
+This is the current state of things, as of 11th March 2022.
+
