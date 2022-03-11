@@ -1,0 +1,54 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {
+    "VPCStack": {
+      "Type": "String",
+      "Description": "VPC Stack Name"
+    }
+  },
+  "Resources": {
+    "SimpleAWSTestSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties":{
+        "GroupName":"SimpleAWSTestSecurityGroup",
+        "GroupDescription":"A simple security group attached to our VPC",
+        "VpcId": {"Fn::ImportValue" :  {"Fn::Sub": "${VPCStack}-VPC"}},
+        "SecurityGroupIngress": [
+          {
+            "CidrIp":"0.0.0.0/0",
+            "IpProtocol": "tcp",
+            "FromPort":"22",
+            "ToPort":"22"
+          },
+          {
+            "CidrIp":"0.0.0.0/0",
+            "IpProtocol": "tcp",
+            "FromPort":"80",
+            "ToPort":"80"
+          },
+          {
+            "CidrIp":"0.0.0.0/0",
+            "IpProtocol": "tcp",
+            "FromPort":"443",
+            "ToPort":"443"
+          }
+        ]
+      }
+    },
+
+    "SimpleAWSTestDeploymentConfiguration": {
+      "Type": "AWS::AutoScaling::LaunchConfiguration",
+      "Properties": {
+        "IamInstanceProfile": "arn:aws:iam::780487234683:instance-profile/ServicePolicyEC2S3",
+        "ImageId": "ami-015361da3677f7ce2",
+        "InstanceType": "t2.micro",
+        "SecurityGroups": [{"Ref": "SimpleAWSTestSecurityGroup"}],
+        "LaunchConfigurationName": "SimpleAWSTestDeploymentConfiguration",
+        "KeyName": "LinuxLaptopKeyPair"
+      }
+    }
+  },
+  "Outputs": {
+    
+  }
+}

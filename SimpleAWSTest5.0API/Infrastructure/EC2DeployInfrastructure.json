@@ -1,0 +1,60 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {
+    "VPCStack": {
+      "Type": "String",
+      "Description": "VPC Stack Name"
+    }
+  },
+  "Resources": {
+    "SimpleAWSTestApplicationLoadBalancer": {
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties": {
+        "Name": "SimpleAWSTestALB",
+        "Subnets": [
+          {"Fn::ImportValue" :  {"Fn::Sub": "${VPCStack}-Subnet1"}},
+          {"Fn::ImportValue" :  {"Fn::Sub": "${VPCStack}-Subnet2"}}
+        ]
+      }
+    },
+    
+    "SimpleAWSTestTargetGroup": {
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties": {
+        "VpcId": {"Fn::ImportValue" :  {"Fn::Sub": "${VPCStack}-VPC"}},
+        "Port": "80",
+        "Protocol": "HTTP"
+      }
+    },
+
+    "SimpleAWSTestTargetGroupListener": {
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties": {
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "ForwardConfig": {
+              "TargetGroups": [ { "TargetGroupArn": {"Ref": "SimpleAWSTestTargetGroup"}, "Weight": "1"}]
+            }
+          }
+        ],
+        "LoadBalancerArn": {"Ref": "SimpleAWSTestApplicationLoadBalancer"},
+        "Port": "80",
+        "Protocol": "HTTP"
+      }
+    },
+
+    "SimpleAWSTestAutoScalingGroup": {
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+      "Properties": {
+        "LaunchConfigurationName": "SimpleAWSTestDeploymentConfiguration",
+        "DesiredCapacity": "2",
+        "MaxSize": "4",
+        "MinSize": "1",
+        "TargetGroupARNs": [{"Ref": "SimpleAWSTestTargetGroup"}],
+        "VPCZoneIdentifier": [{"Fn::ImportValue" :  {"Fn::Sub": "${VPCStack}-Subnet1"}},
+                              {"Fn::ImportValue" :  {"Fn::Sub": "${VPCStack}-Subnet2"}}]
+      }
+    }
+  }
+}

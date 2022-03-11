@@ -1,77 +1,105 @@
 {
-    "AWSTemplateFormatVersion": "2010-09-09",
-    "Resources": {
-        "SimpleAWSTestVPC": {
-            "Type": "AWS::EC2::VPC",
-            "Properties": {
-                "CidrBlock": "10.0.0.0/24",
-                "Tags": [ {"Key":"Name", "Value":"SimpleAWSTestVPC"}]
-            }
-        },
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Resources": {
+    "SimpleAWSTestVPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.0.0.0/24",
+        "Tags": [ {"Key":"Name", "Value":"SimpleAWSTestVPC"}]
+      }
+    },
 
-        "SimpleAWSTestPublicSubnet1": {
-            "Type": "AWS::EC2::Subnet",
-            "Properties": {
-                "VpcId": { "Ref" : "SimpleAWSTestVPC" },
-                "CidrBlock" : "10.0.0.0/26",
-                "MapPublicIpOnLaunch": "True",
-                "Tags":[ {"Key":"Name", "Value":"SimpleAWSTestPublicSubnet1"}]
-            }
-        },
+    "SimpleAWSTestPublicSubnet1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref" : "SimpleAWSTestVPC" },
+        "CidrBlock" : "10.0.0.0/26",
+        "MapPublicIpOnLaunch": "True",
+        "AvailabilityZone": "eu-west-2a",
+        "Tags":[ {"Key":"Name", "Value":"SimpleAWSTestPublicSubnet1"}]
+      }
+    },
 
-        "SimpleAWSTestInternetGateway": {
-            "Type": "AWS::EC2::InternetGateway",
-            "Properties":{
-            }
-        },
+    "SimpleAWSTestPublicSubnet2": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref" : "SimpleAWSTestVPC" },
+        "CidrBlock" : "10.0.0.64/26",
+        "MapPublicIpOnLaunch": "True",
+        "AvailabilityZone": "eu-west-2b",
+        "Tags":[ {"Key":"Name", "Value":"SimpleAWSTestPublicSubnet2"}]
+      }
+    },
 
-        "SimpleAWSTestInternetGatewayAttachment": {
-            "Type": "AWS::EC2::VPCGatewayAttachment",
-            "Properties": {
-                "VpcId": {"Ref":"SimpleAWSTestVPC"},
-                "InternetGatewayId":{"Ref":"SimpleAWSTestInternetGateway"}
-            }
-        },
+    "SimpleAWSTestInternetGateway": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties":{
+      }
+    },
 
-        "SimpleAWSTestRouteTable": {
-            "Type":"AWS::EC2::RouteTable",
-            "Properties": {
-                "VpcId": {"Ref" : "SimpleAWSTestVPC"}
-            }
-        },
+    "SimpleAWSTestInternetGatewayAttachment": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {"Ref":"SimpleAWSTestVPC"},
+        "InternetGatewayId":{"Ref":"SimpleAWSTestInternetGateway"}
+      }
+    },
 
-        "SimpleAWSTestPublicRoute": {
-            "Type": "AWS::EC2::Route",
-            "Properties": {
-                "RouteTableId": {"Ref":"SimpleAWSTestRouteTable"},
-                "DestinationCidrBlock":"0.0.0.0/0",
-                "GatewayId":{"Ref":"SimpleAWSTestInternetGateway"}
-            }
-        },
+    "SimpleAWSTestRouteTable": {
+      "Type":"AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {"Ref" : "SimpleAWSTestVPC"}
+      }
+    },
 
-        "SimpleAWSTestSubnet1RouteTableAssociation": {
-            "Type":"AWS::EC2::SubnetRouteTableAssociation",
-            "Properties": {
-                "SubnetId": {"Ref" : "SimpleAWSTestPublicSubnet1"},
-                "RouteTableId": {"Ref":"SimpleAWSTestRouteTable"}
-            }
-        },
+    "SimpleAWSTestPublicRoute": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {"Ref":"SimpleAWSTestRouteTable"},
+        "DestinationCidrBlock":"0.0.0.0/0",
+        "GatewayId":{"Ref":"SimpleAWSTestInternetGateway"}
+      }
+    },
 
-        "SimpleAWSTestSecurityGroup": {
-            "Type": "AWS::EC2::SecurityGroup",
-            "Properties":{
-                "GroupName":"SimpleAWSTestSecurityGroup",
-                "GroupDescription":"A simple security group attached to our VPC",
-                "VpcId": {"Ref":"SimpleAWSTestVPC"},
-                "SecurityGroupIngress": [
-                    {
-                        "CidrIp":"0.0.0.0/0",
-                        "IpProtocol": "tcp",
-                        "FromPort":"22",
-                        "ToPort":"22"
-                    }
-                ]
-            }
-        }
+    "SimpleAWSTestSubnet1RouteTableAssociation": {
+      "Type":"AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {"Ref" : "SimpleAWSTestPublicSubnet1"},
+        "RouteTableId": {"Ref":"SimpleAWSTestRouteTable"}
+      }
+    },
+
+    "SimpleAWSTestSubnet2RouteTableAssociation": {
+      "Type":"AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {"Ref" : "SimpleAWSTestPublicSubnet2"},
+        "RouteTableId": {"Ref":"SimpleAWSTestRouteTable"}
+      }
     }
+  },
+  "Outputs": {
+    "VPC":{
+      "Description": "VPC ARN",
+      "Value": {"Ref": "SimpleAWSTestVPC"},
+      "Export": {
+        "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "VPC"]]}
+      }
+    },
+
+    "VPCSubnet1":{
+      "Description": "VPC Subnet1 ARN",
+      "Value": {"Ref": "SimpleAWSTestPublicSubnet1"},
+      "Export": {
+        "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "Subnet1"]]}
+      }
+    },
+
+    "VPCSubnet2":{
+      "Description": "VPC Subnet2 ARN",
+      "Value": {"Ref": "SimpleAWSTestPublicSubnet2"},
+      "Export": {
+        "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "Subnet2"]]}
+      }
+    }
+  }
 }
