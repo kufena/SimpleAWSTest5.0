@@ -19,3 +19,4 @@ artifacts:
   files:
     - ./SimpleAWSTest5.0API/**/*
     - ./appspec.yml
+    - ./scripts/*
