@@ -23,7 +23,8 @@
       "Properties": {
         "VpcId": {"Fn::ImportValue" :  {"Fn::Sub": "${VPCStack}-VPC"}},
         "Port": "80",
-        "Protocol": "HTTP"
+        "Protocol": "HTTP",
+        "Name": "SimpleAWSTestTargetGroup"
       }
     },
 
