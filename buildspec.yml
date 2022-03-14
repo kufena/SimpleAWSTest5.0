@@ -20,3 +20,5 @@ artifacts:
     - ./SimpleAWSTest5.0API/**/*
     - ./appspec.yml
     - ./scripts/*
+  name: simpleawstest50.zip
+  
