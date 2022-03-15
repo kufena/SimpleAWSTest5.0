@@ -3,6 +3,8 @@ os: linux
 files:
   - source: /
     destination: /root/App/
+  - source: website.service
+    destination: /etc/systemd/system
 hooks:
   BeforeInstall:
     - location: scripts/install_dependencies.sh
