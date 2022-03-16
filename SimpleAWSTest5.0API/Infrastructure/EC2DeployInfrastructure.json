@@ -24,7 +24,14 @@
         "VpcId": {"Fn::ImportValue" :  {"Fn::Sub": "${VPCStack}-VPC"}},
         "Port": "80",
         "Protocol": "HTTP",
-        "Name": "SimpleAWSTestTargetGroup"
+        "Name": "SimpleAWSTestTargetGroup",
+        "HealthCheckEnabled": "true",
+        "HealthCheckPort": "80",
+        "HealthCheckURL": "/api/Home",
+        "HealthCheckProtocol": "HTTP",
+        "HealthCheckTimeoutSeconds": "60",
+        "HealthCheckIntervalSeconds": "360",
+        "HealthCheckThresholdCount": "3"
       }
     },
 

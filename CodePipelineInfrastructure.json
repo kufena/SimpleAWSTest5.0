@@ -1,17 +1,24 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
   "Parameters": {
-    "VPCStack": {
+    "CodePipelineServiceRoleARN": {
       "Type": "String",
-      "Description": "VPC Stack Name"
+      "Description": "Code Pipeline Service Role ARN"
     }
   },
   "Resources": {
+    "ArtifactS3Bucket": {
+      "Type": "AWS::S3::Bucket",
+      "Resources": {
+        "BucketName": "SimpleAWSTest50ArtefactBucket"
+      }
+    },
+    
     "AppPipeline": {
       "Type": "AWS::CodePipeline::Pipeline",
       "Properties": {
         "RoleArn": {
-          "Ref": "CodePipelineServiceRole"
+          "Ref": "CodePipelineServiceRoleARN"
         },
         "Stages": [
           {
