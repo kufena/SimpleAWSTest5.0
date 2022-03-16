@@ -31,7 +31,7 @@
         "HealthCheckProtocol": "HTTP",
         "HealthCheckTimeoutSeconds": "60",
         "HealthCheckIntervalSeconds": "360",
-        "HealthCheckThresholdCount": "3"
+        "HealthyThresholdCount": "3"
       }
     },
 

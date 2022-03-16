@@ -4,6 +4,10 @@
     "CodePipelineServiceRoleARN": {
       "Type": "String",
       "Description": "Code Pipeline Service Role ARN"
+    },
+    "CodeDeployServiceRoleARN": {
+      "Type": "String",
+      "Description": "ARN of service role for Code Deploy"
     }
   },
   "Resources": {
@@ -11,6 +15,41 @@
       "Type": "AWS::S3::Bucket",
       "Resources": {
         "BucketName": "SimpleAWSTest50ArtefactBucket"
+      }
+    },
+
+    "CodeBuildProject" : {
+      "Type": "AWS::CodeBuild::Project",
+      "Properties": {
+        "Artifacts": {
+          "Type": "CODEPIPELINE"
+        },
+        "Source": {
+          "Type": "CODEPIPELINE",
+          "BuildSpec": "buildspec.yml"
+        },
+        "Environment": {
+          "ComputeType": "BUILD_GENERAL1_SMALL",
+          "Image": "aws/codebuild/docker:17.09.0",
+          "Type": "LINUX_CONTAINER"
+        },
+        "Name": "!Ref AWS::StackName",
+        "ServiceRole": "!Ref CodeBuildServiceRole"
+      }
+    },
+    
+    "CodeDeployApplication" : {
+      "Type": "AWS::CodeDeploy::Application"
+    },
+    "CodeDeployGroup": {
+      "Type": "AWS::CodeDeploy::DeploymentGroup",
+      "Properties": {
+        "ApplicationName": {
+          "Ref": "CodeDeployApplication"
+        },
+        "ServiceRoleArn": {
+          "Ref": "CodeDeployServiceRoleARN"
+        }
       }
     },
     
@@ -80,7 +119,14 @@
               "Version": "1",
               "Provider": "CodeDeploy"
             },
-            "RunOrder": 3
+            "RunOrder": 3,
+            "Configuration": {
+              "AppicationName": "",
+              "DeploymentConfiguration": ""
+            },
+            "InputArtifacts": [{
+              "Name": "PrimaryBuildOutput"
+            }]
           }
         ],
         
