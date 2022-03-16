@@ -17,120 +17,78 @@
     "AppPipeline": {
       "Type": "AWS::CodePipeline::Pipeline",
       "Properties": {
-        "RoleArn": {
-          "Ref": "CodePipelineServiceRoleARN"
-        },
+        "RoleArn": "arn:aws:iam::780487234683:policy/service-role/AWSCodePipelineServiceRole-eu-west-2-dotNetPipeline",
         "Stages": [
           {
             "Name": "Source",
             "Actions": [
               {
                 "Name": "SourceAction",
+                "InputArtifacts": [],
                 "ActionTypeId": {
                   "Category": "Source",
                   "Owner": "AWS",
                   "Version": "1",
-                  "Provider": "S3"
+                  "Provider": "CodeStarSourceConnection"
+                },
+                "Configuration": {
+                  "ConnectionArn": "arn:aws:codestar-connections:eu-west-2:780487234683:connection/43c0aecd-9e08-4eba-83b6-2b2131d809fb",
+                  "FullRepositoryId": "kufena/SimpleAWSTest5.0",
+                  "BranchName": "main",
+                  "OutputArtifactFormat": "CODE_ZIP"
                 },
                 "OutputArtifacts": [
                   {
-                    "Name": "SourceOutput"
+                    "Name": "PrimarySourceOutput"
                   }
                 ],
-                "Configuration": {
-                  "S3Bucket": {
-                    "Ref": "SourceS3Bucket"
-                  },
-                  "S3ObjectKey": {
-                    "Ref": "SourceS3ObjectKey"
-                  }
-                },
                 "RunOrder": 1
               }
             ]
           },
           {
-            "Name": "Beta",
-            "Actions": [
+            "Name": "Build",
+            "ActionTypeId": {
+              "Category": "Build",
+              "Owner": "AWS",
+              "Version": "1",
+              "Provider": "CodeBuild"
+            },
+            "RunOrder": 2,
+            "Configuration": {
+              "BatchEnabled": "true",
+              "CombineArtifacts": "true",
+              "ProjectName": "my-build-project",
+              "PrimarySource": "PrimarySourceOutput"
+            },
+            "OutputArtifacts": [
               {
-                "Name": "BetaAction",
-                "InputArtifacts": [
-                  {
-                    "Name": "SourceOutput"
-                  }
-                ],
-                "ActionTypeId": {
-                  "Category": "Deploy",
-                  "Owner": "AWS",
-                  "Version": "1",
-                  "Provider": "CodeDeploy"
-                },
-                "Configuration": {
-                  "ApplicationName": {
-                    "Ref": "ApplicationName"
-                  },
-                  "DeploymentGroupName": {
-                    "Ref": "DeploymentGroupName"
-                  }
-                },
-                "RunOrder": 1
+                "Name": "PrimaryBuildOutput"
+              }
+            ],
+            "InputArtifacts": [
+              {
+                "Name": "PrimarySourceOutput"
               }
             ]
           },
           {
-            "Name": "Release",
-            "Actions": [
-              {
-                "Name": "ReleaseAction",
-                "InputArtifacts": [
-                  {
-                    "Name": "SourceOutput"
-                  }
-                ],
-                "ActionTypeId": {
-                  "Category": "Deploy",
-                  "Owner": "AWS",
-                  "Version": "1",
-                  "Provider": "CodeDeploy"
-                },
-                "Configuration": {
-                  "ApplicationName": {
-                    "Ref": "ApplicationName"
-                  },
-                  "DeploymentGroupName": {
-                    "Ref": "DeploymentGroupName"
-                  }
-                },
-                "RunOrder": 1
-              }
-            ]
+            "Name": "Deploy",
+            "ActionTypeId": {
+              "Category": "Deploy",
+              "Owner": "AWS",
+              "Version": "1",
+              "Provider": "CodeDeploy"
+            },
+            "RunOrder": 3
           }
         ],
+        
         "ArtifactStore": {
           "Type": "S3",
           "Location": {
             "Ref": "ArtifactStoreS3Location"
-          },
-          "EncryptionKey": {
-            "Id": "arn:aws:kms:useast-1:ACCOUNT-ID:key/KEY-ID",
-            "Type": "KMS"
-          },
-          "DisableInboundStageTransitions": [
-            {
-              "StageName": "Release",
-              "Reason": "Disabling the transition until integration tests are completed"
-            }
-          ],
-          "Tags": [
-            {
-              "Key": "Project",
-              "Value": "ProjectA"
-            },
-            {
-              "Key": "IsContainerBased",
-              "Value": "true"
-            }
-          ]
+          }
         }
       }
     }
