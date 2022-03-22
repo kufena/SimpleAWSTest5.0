@@ -27,10 +27,10 @@
         "Name": "SimpleAWSTestTargetGroup",
         "HealthCheckEnabled": "true",
         "HealthCheckPort": "80",
-        "HealthCheckURL": "/api/Home",
+        "HealthCheckPath": "/api/Home",
         "HealthCheckProtocol": "HTTP",
         "HealthCheckTimeoutSeconds": "60",
-        "HealthCheckIntervalSeconds": "360",
+        "HealthCheckIntervalSeconds": "300",
         "HealthyThresholdCount": "3"
       }
     },
