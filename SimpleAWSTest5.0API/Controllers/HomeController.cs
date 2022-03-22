@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using SimpleAWSTest5._0API.Utils;
+using System.Net;
 
 namespace SimpleAWSTest5._0API.Controllers
 {
@@ -26,7 +27,15 @@ namespace SimpleAWSTest5._0API.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(new { fromConfig = _parameters.Value.SomeParameter });
+            var r = DateTime.Now;
+            
+            return Ok(new
+            {
+                fromConfig = _parameters.Value.SomeParameter,
+                hostName = System.Environment.MachineName,
+                date = r.ToLongDateString(),
+                time = r.ToLongTimeString() 
+            });
         }
     }
 }
