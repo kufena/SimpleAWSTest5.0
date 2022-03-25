@@ -4,6 +4,10 @@
     "VPCStack": {
       "Type": "String",
       "Description": "VPC Stack Name"
+    },
+    "SGStack": {
+      "Type": "String",
+      "Description": "Security Group Stack Name"
     }
   },
   "Resources": {
@@ -14,6 +18,9 @@
         "Subnets": [
           {"Fn::ImportValue" :  {"Fn::Sub": "${VPCStack}-Subnet1"}},
           {"Fn::ImportValue" :  {"Fn::Sub": "${VPCStack}-Subnet2"}}
+        ],
+        "SecurityGroups": [
+          {"Fn::ImportValue" :  {"Fn::Sub": "${SGStack}-SimpleAWSTestSecurityGroup"}}
         ]
       }
     },

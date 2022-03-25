@@ -49,6 +49,12 @@
     }
   },
   "Outputs": {
-    
+    "SimpleAWSTestSecurityGroup":{
+      "Description": "Security Group for this deployment.",
+      "Value": {"Ref": "SimpleAWSTestSecurityGroup"},
+      "Export": {
+        "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "SimpleAWSTestSecurityGroup"]]}
+      }
+    }
   }
 }
