@@ -6,7 +6,7 @@ Use something like this:
 
     aws cloudformation create-stack --stack-name SimpleAWSTestSGStack --template-body file://./SGConfigurationDeploymentInfrastructure.json --parameters ParameterKey=VPCStack,ParameterValue=SimpleAWSTestVPCStack --on-failure DO_NOTHING
 
-    aws cloudformation create-stack --stack-name SimpleAWSTestEC2Stack --template-body file://./EC2DeployInfrastructure.json --parameters ParameterKey=VPCStack,ParameterValue=SimpleAWSTestVPCStack,ParameterKey=SGStack,ParameterValue=SimpleAWSTestSGStack --on-failure DO_NOTHING
+    aws cloudformation create-stack --stack-name SimpleAWSTestEC2Stack --template-body file://./EC2DeployInfrastructure.json --parameters ParameterKey=VPCStack,ParameterValue=SimpleAWSTestVPCStack ParameterKey=SGStack,ParameterValue=SimpleAWSTestSGStack --on-failure DO_NOTHING
 
 The first stack creates a VPC and two public subnets in eu-west-2 (hard-coded some of the availability zones unfortunately.)
 
