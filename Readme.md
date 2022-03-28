@@ -1,4 +1,4 @@
-## Simple AWS Test of API and Parameters ##
+## Simple AWS Test of API and Parameters and AWS CodePipeline ##
 
 This has grown from a simple test of loading parameters from AWS Parameter Store, to a full blown test of
 building infrastructure using CloudFormation, and using CodeBuild, CodeDeploy and CodePipeline to do
