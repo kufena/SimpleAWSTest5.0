@@ -7,11 +7,40 @@
     }
   },
   "Resources": {
-    "SimpleAWSTestSecurityGroup": {
+    "SimpleAWSTestSecurityGroupInternal": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties":{
-        "GroupName":"SimpleAWSTestSecurityGroup",
+        "GroupName":"SimpleAWSTestSecurityGroupInternal",
         "GroupDescription":"A simple security group attached to our VPC",
+        "VpcId": {"Fn::ImportValue" :  {"Fn::Sub": "${VPCStack}-VPC"}},
+        "SecurityGroupIngress": [
+          {
+            "CidrIp":"0.0.0.0/0",
+            "IpProtocol": "tcp",
+            "FromPort":"22",
+            "ToPort":"22"
+          },
+          {
+            "CidrIp":"10.0.0.0/24",
+            "IpProtocol": "tcp",
+            "FromPort":"80",
+            "ToPort":"80"
+          },
+          {
+            "CidrIp":"10.0.0.0/24",
+            "IpProtocol": "tcp",
+            "FromPort":"443",
+            "ToPort":"443"
+          }
+        ]
+      }
+    },
+
+    "SimpleAWSTestSecurityGroupExternal": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties":{
+        "GroupName":"SimpleAWSTestSecurityGroupExternal",
+        "GroupDescription":"A simple security group attached for our Load Balancer",
         "VpcId": {"Fn::ImportValue" :  {"Fn::Sub": "${VPCStack}-VPC"}},
         "SecurityGroupIngress": [
           {
@@ -42,18 +71,25 @@
         "IamInstanceProfile": "arn:aws:iam::780487234683:instance-profile/ServicePolicyEC2S3",
         "ImageId": "ami-015361da3677f7ce2",
         "InstanceType": "t2.micro",
-        "SecurityGroups": [{"Ref": "SimpleAWSTestSecurityGroup"}],
+        "SecurityGroups": [{"Ref": "SimpleAWSTestSecurityGroupInternal"}],
         "LaunchConfigurationName": "SimpleAWSTestDeploymentConfiguration",
         "KeyName": "LinuxLaptopKeyPair"
       }
     }
   },
   "Outputs": {
-    "SimpleAWSTestSecurityGroup":{
-      "Description": "Security Group for this deployment.",
-      "Value": {"Ref": "SimpleAWSTestSecurityGroup"},
+    "SimpleAWSTestSecurityGroupInternal":{
+      "Description": "Security Group for this deployment inside the VPC.",
+      "Value": {"Ref": "SimpleAWSTestSecurityGroupInternal"},
       "Export": {
-        "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "SimpleAWSTestSecurityGroup"]]}
+        "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "SimpleAWSTestSecurityGroupInternal"]]}
+      }
+    },
+    "SimpleAWSTestSecurityGroupExternal":{
+      "Description": "Security Group for this deployment from Outside.",
+      "Value": {"Ref": "SimpleAWSTestSecurityGroupExternal"},
+      "Export": {
+        "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "SimpleAWSTestSecurityGroupExternal"]]}
       }
     }
   }

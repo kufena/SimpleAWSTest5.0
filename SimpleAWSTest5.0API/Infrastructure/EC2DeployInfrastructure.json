@@ -20,7 +20,7 @@
           {"Fn::ImportValue" :  {"Fn::Sub": "${VPCStack}-Subnet2"}}
         ],
         "SecurityGroups": [
-          {"Fn::ImportValue" :  {"Fn::Sub": "${SGStack}-SimpleAWSTestSecurityGroup"}}
+          {"Fn::ImportValue" :  {"Fn::Sub": "${SGStack}-SimpleAWSTestSecurityGroupExternal"}}
         ]
       }
     },
@@ -36,9 +36,9 @@
         "HealthCheckPort": "80",
         "HealthCheckPath": "/api/Home",
         "HealthCheckProtocol": "HTTP",
-        "HealthCheckTimeoutSeconds": "60",
-        "HealthCheckIntervalSeconds": "300",
-        "HealthyThresholdCount": "3"
+        "HealthCheckTimeoutSeconds": "30",
+        "HealthCheckIntervalSeconds": "60",
+        "HealthyThresholdCount": "2"
       }
     },
 
