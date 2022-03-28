@@ -22,13 +22,6 @@ This is not complete, at present.  Things to do include:
 
 ## CodeBuild local instructions. ##
 
-The test here is several-fold:
-
-- Firstly, testing CodeBuild, CodeDeploy and CodePipeline from a github repo.
-- Secondly, using Parameter Store to configure the simple application.
-
-I guess this'll be deployed eventually to an EC2 instance.  It only needs to be simple.
-
 You'll need a couple of things for CodeBuild local.  Download the standard image sources here:
 
     git clone https://github.com/aws/aws-codebuild-docker-images.git
