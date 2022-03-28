@@ -1,9 +1,31 @@
 ## Simple AWS Test of API and Parameters ##
 
+This has grown from a simple test of loading parameters from AWS Parameter Store, to a full blown test of
+building infrastructure using CloudFormation, and using CodeBuild, CodeDeploy and CodePipeline to do
+CI/CD on AWS to EC2 instances.
+
+In this root directory, you'll find this Readme.md file, as well as some other bits and bobs required:
+
+- the appspec.yml and buildspec.yml files required by CodeDeploy and CodeBuild respectively,
+- a scripts directory, containing deploy and run scripts for the simple .NET 5 API in the main project.  This runs the application using a systemd service,
+- website.service is a file for setting up the .NET 5 application as a systemd service,
+- The SimpleAWSTest5.0API and SimpleAWSTest5.0Test projects, of which we only use the API project at the moment.
+
+The SimpleAWSTest5.0API project contains the usual stuff required for a .NET 5 ASP.NET application, together with an Infrastructure directory containing the CloudFormation files.
+There is a Read Me file here to tell you what to do.
+
+This is not complete, at present.  Things to do include:
+
+- Move and complete the CodePipelineInfrastructure.json file, so we can set up the codepipeline easily.
+- Write CloudFormation templates for all Policies and Roles we use, together with creating the artefact S3 bucket and stuff.
+- Fix some issues surround the SecurityGroup and TargetGroup rules - I don't think the EC2 instances need to be so public, so the instances can allow traffic from the Load Balancer only (or at least the CIDR block for the VPC).  This means the Load Balancer will need a Security Group for external access.  Of course, we'll still need ssh access to the instances.
+
+## CodeBuild local instructions. ##
+
 The test here is several-fold:
 
-    Firstly, testing CodeBuild, CodeDeploy and CodePipeline from a github repo.
-    Secondly, using Parameter Store to configure the simple application.
+- Firstly, testing CodeBuild, CodeDeploy and CodePipeline from a github repo.
+- Secondly, using Parameter Store to configure the simple application.
 
 I guess this'll be deployed eventually to an EC2 instance.  It only needs to be simple.
 
