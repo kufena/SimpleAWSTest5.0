@@ -1,0 +1,222 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {
+    
+  },
+  "Resources": {
+    
+    "SimpleAWSS3BuildDeployArtefacts": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": "simpleawss3builddeployartefacts"
+      }
+    },
+
+    "S3ArtefactAccessPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": [
+                "s3:Get*",
+                "s3:List*",
+                "s3:Describe"
+              ],
+              "Effect": "Allow",
+              "Resource": {"Fn::GetAtt": ["SimpleAWSS3BuildDeployArtefacts","Arn"]}
+            }
+          ]
+        },
+        "PolicyName": "S3ArtefactAccessPolicy",
+        "Roles": [{"Ref": "ServiceRoleForEC2Instances"}]
+      }
+    },
+
+    "S3ArtefactAccessPolicyFuller": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": [
+                "s3:Get*",
+                "s3:List*",
+                "s3:Write*",
+                "s3:Describe"
+              ],
+              "Effect": "Allow",
+              "Resource": {"Fn::GetAtt": ["SimpleAWSS3BuildDeployArtefacts","Arn"]}
+            }
+          ]
+        },
+        "PolicyName": "S3ArtefactAccessPolicyFuller",
+        "Roles": [{"Ref": "ServiceRoleForCodeDeploy"}]
+      }
+    },
+
+    "ParameterStoreAccess": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": [
+                "ssm:DescribeAssociation",
+                "ssm:GetDeployablePatchSnapshotForInstance",
+                "ssm:GetDocument",
+                "ssm:DescribeDocument",
+                "ssm:GetManifest",
+                "ssm:GetParameter",
+                "ssm:GetParameters",
+                "ssm:ListAssociations",
+                "ssm:ListInstanceAssociations",
+                "ssm:PutInventory",
+                "ssm:GetParametersByPath"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            }
+          ]
+        },
+        "PolicyName": "ParameterStoreAccess",
+        "Roles": [{"Ref": "ServiceRoleForEC2Instances"}]
+      }
+    },
+
+    "SomePoliciesForCodeDeploy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": [
+                "autoscaling:CompleteLifecycleAction",
+                "autoscaling:DeleteLifecycleHook",
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:DescribeLifecycleHooks",
+                "autoscaling:PutLifecycleHook",
+                "autoscaling:RecordLifecycleActionHeartbeat",
+                "autoscaling:CreateAutoScalingGroup",
+                "autoscaling:UpdateAutoScalingGroup",
+                "autoscaling:EnableMetricsCollection",
+                "autoscaling:DescribePolicies",
+                "autoscaling:DescribeScheduledActions",
+                "autoscaling:DescribeNotificationConfigurations",
+                "autoscaling:SuspendProcesses",
+                "autoscaling:ResumeProcesses",
+                "autoscaling:AttachLoadBalancers",
+                "autoscaling:AttachLoadBalancerTargetGroups",
+                "autoscaling:PutScalingPolicy",
+                "autoscaling:PutScheduledUpdateGroupAction",
+                "autoscaling:PutNotificationConfiguration",
+                "autoscaling:PutWarmPool",
+                "autoscaling:DescribeScalingActivities",
+                "autoscaling:DeleteAutoScalingGroup",
+                "ec2:DescribeInstances",
+                "ec2:DescribeInstanceStatus",
+                "ec2:TerminateInstances",
+                "tag:GetResources",
+                "sns:Publish",
+                "cloudwatch:DescribeAlarms",
+                "cloudwatch:PutMetricAlarm",
+                "elasticloadbalancing:DescribeLoadBalancers",
+                "elasticloadbalancing:DescribeInstanceHealth",
+                "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
+                "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
+                "elasticloadbalancing:DescribeTargetGroups",
+                "elasticloadbalancing:DescribeTargetHealth",
+                "elasticloadbalancing:RegisterTargets",
+                "elasticloadbalancing:DeregisterTargets"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            }
+          ]
+        },
+        "PolicyName": "SomePoliciesForCodeDeploy",
+        "Roles": [{"Ref": "ServiceRoleForCodeDeploy"}]
+      }
+    },
+    
+    "ServiceRoleForEC2Instances": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ec2.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        }
+      }
+    },
+    
+    "ServiceRoleForEC2InstancesInstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "InstanceProfileName": "ServiceRoleForEC2InstancesInstanceProfile",
+        "Roles": [{"Ref": "ServiceRoleForEC2Instances"}],
+        "Path": "/"
+      }
+    },
+
+    "ServiceRoleForCodeDeploy": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "codedeploy.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        }
+      }
+    }
+  },
+  
+  "Outputs": {
+    "SimpleAWSS3BuildDeployArtefacts":{
+      "Description": "S3 Artefact Bucket.",
+      "Value": {"Ref": "SimpleAWSS3BuildDeployArtefacts"},
+      "Export": {
+        "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "SimpleAWSS3BuildDeployArtefacts"]]}
+      }
+    },
+    "ServiceRoleForEC2Instances":{
+      "Description": "EC2 Instance Role.",
+      "Value": {"Ref": "ServiceRoleForEC2Instances"},
+      "Export": {
+        "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "ServiceRoleForEC2Instances"]]}
+      }
+    },
+    "ServiceRoleForCodeDeploy":{
+      "Description": "Code Deploy Service Role to access S3 Read/Write",
+      "Value": {"Ref": "ServiceRoleForCodeDeploy"},
+      "Export": {
+        "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "ServiceRoleForCodeDeploy"]]}
+      }
+    },
+    "ServiceRoleForEC2InstancesInstanceProfile": {
+      "Description": "InstanceProfile for the EC2 Instance Service Role",
+      "Value": {"Ref": "ServiceRoleForEC2InstancesInstanceProfile"},
+      "Export": {
+        "Name": {"Fn::Join":["-",[{"Ref": "AWS::StackName"}, "ServiceRoleForEC2InstancesInstanceProfile"]] }
+      }
+    }
+  }
+}

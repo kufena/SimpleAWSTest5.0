@@ -111,3 +111,17 @@ CodeBuildServiceRole:
                   - codedeploy:GetDeploymentConfig
                   - codedeploy:RegisterApplicationRevision
                   
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "s3:Get*",
+                "s3:List*",
+                "ssm:GetParametersByPath"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+        }
+    ]
+}

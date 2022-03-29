@@ -1,23 +1,13 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
   "Parameters": {
-    "CodePipelineServiceRoleARN": {
+    "RolesStack": {
       "Type": "String",
-      "Description": "Code Pipeline Service Role ARN"
-    },
-    "CodeDeployServiceRoleARN": {
-      "Type": "String",
-      "Description": "ARN of service role for Code Deploy"
+      "Description": "Stack for Roles and Policies and Artefact Bucket."
     }
   },
   "Resources": {
-    "ArtifactS3Bucket": {
-      "Type": "AWS::S3::Bucket",
-      "Resources": {
-        "BucketName": "SimpleAWSTest50ArtefactBucket"
-      }
-    },
-
+    
     "CodeBuildProject" : {
       "Type": "AWS::CodeBuild::Project",
       "Properties": {

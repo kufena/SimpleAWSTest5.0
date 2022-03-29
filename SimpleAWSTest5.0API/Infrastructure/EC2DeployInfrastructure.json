@@ -36,9 +36,9 @@
         "HealthCheckPort": "80",
         "HealthCheckPath": "/api/Home",
         "HealthCheckProtocol": "HTTP",
-        "HealthCheckTimeoutSeconds": "30",
-        "HealthCheckIntervalSeconds": "60",
-        "HealthyThresholdCount": "2"
+        "HealthCheckTimeoutSeconds": "60",
+        "HealthCheckIntervalSeconds": "300",
+        "HealthyThresholdCount": "3"
       }
     },
 

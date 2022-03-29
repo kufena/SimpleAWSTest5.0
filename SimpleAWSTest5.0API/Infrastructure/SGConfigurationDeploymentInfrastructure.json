@@ -4,6 +4,10 @@
     "VPCStack": {
       "Type": "String",
       "Description": "VPC Stack Name"
+    },
+    "RolesStack": {
+      "Type": "String",
+      "Description": "Policies/Roles Stack" 
     }
   },
   "Resources": {
@@ -68,7 +72,7 @@
     "SimpleAWSTestDeploymentConfiguration": {
       "Type": "AWS::AutoScaling::LaunchConfiguration",
       "Properties": {
-        "IamInstanceProfile": "arn:aws:iam::780487234683:instance-profile/ServicePolicyEC2S3",
+        "IamInstanceProfile": {"Fn::ImportValue" :  {"Fn::Sub": "${RolesStack}-ServiceRoleForEC2InstancesInstanceProfile"}},
         "ImageId": "ami-015361da3677f7ce2",
         "InstanceType": "t2.micro",
         "SecurityGroups": [{"Ref": "SimpleAWSTestSecurityGroupInternal"}],

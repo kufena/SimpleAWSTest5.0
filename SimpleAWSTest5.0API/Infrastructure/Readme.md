@@ -2,15 +2,18 @@
 
 Use something like this:
 
+    aws cloudformation create-stack --stack-name SimpleAWSTestRolesandPolicies --template-body file://./PoliciesRolesS3Infrastructure.json --on-failure DO_NOTHING --capabilities CAPABILITY_NAMED_IAM
+
     aws cloudformation create-stack --stack-name SimpleAWSTestVPCStack --template-body file://./VPCInfrastructure.json --on-failure DO_NOTHING
 
-    aws cloudformation create-stack --stack-name SimpleAWSTestSGStack --template-body file://./SGConfigurationDeploymentInfrastructure.json --parameters ParameterKey=VPCStack,ParameterValue=SimpleAWSTestVPCStack --on-failure DO_NOTHING
+    aws cloudformation create-stack --stack-name SimpleAWSTestSGStack --template-body file://./SGConfigurationDeploymentInfrastructure.json --parameters ParameterKey=VPCStack,ParameterValue=SimpleAWSTestVPCStack ParameterKey=RolesStack,ParameterValue=SimpleAWSTestRolesandPolicies --on-failure DO_NOTHING
 
     aws cloudformation create-stack --stack-name SimpleAWSTestEC2Stack --template-body file://./EC2DeployInfrastructure.json --parameters ParameterKey=VPCStack,ParameterValue=SimpleAWSTestVPCStack ParameterKey=SGStack,ParameterValue=SimpleAWSTestSGStack --on-failure DO_NOTHING
 
-The first stack creates a VPC and two public subnets in eu-west-2 (hard-coded some of the availability zones unfortunately.)
+The first stack creates roles and policies for use by the EC2 instances, and code build/deploy, as well as a bucket for build artefacts.
+Next builds VPC and two public subnets in eu-west-2 (hard-coded some of the availability zones unfortunately.)
 
-The second stack creates a security group and a launch configuration.  This is done in
+The next stack creates a security group and a launch configuration.  This is done in
 a separate stack because I couldn't get the subsequent auto-scaling group to see the
 launch configuration.
 
