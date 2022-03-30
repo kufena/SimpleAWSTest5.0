@@ -1,13 +1,16 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Parameters": {
-    
-  },
   "Resources": {
     "SimpleAWSS3BuildDeployArtefacts": {
       "Type": "AWS::S3::Bucket",
       "Properties": {
         "BucketName": "simpleawss3builddeployartefacts"
+      }
+    },
+    "PipelineLogs": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "SimpleAWSTest50BuildDeployPipelineLogs"
       }
     },
     "S3ArtefactAccessPolicy": {
@@ -23,7 +26,8 @@
                 "s3:Describe"
               ],
               "Effect": "Allow",
-              "Resource": "*"
+              "Resource": [{"Fn::GetAtt": ["SimpleAWSS3BuildDeployArtefacts", "Arn"]},
+                {"Fn::Join": ["",[ {"Fn::GetAtt": ["SimpleAWSS3BuildDeployArtefacts", "Arn"]},"/*" ]]}]
             }
           ]
         },
@@ -46,7 +50,8 @@
                 "s3:*"
               ],
               "Effect": "Allow",
-              "Resource": "*"
+              "Resource": [{"Fn::GetAtt": ["SimpleAWSS3BuildDeployArtefacts", "Arn"]},
+                {"Fn::Join": ["",[ {"Fn::GetAtt": ["SimpleAWSS3BuildDeployArtefacts", "Arn"]},"/*" ]]}]
             }
           ]
         },
@@ -90,6 +95,75 @@
         "Roles": [
           {
             "Ref": "ServiceRoleForEC2Instances"
+          }
+        ]
+      }
+    },
+    "CodeBuildPolicyRequirements": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": ["PipelineLogs","Arn"]
+                }
+              ],
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Resource": [{"Fn::GetAtt": ["SimpleAWSS3BuildDeployArtefacts", "Arn"]},
+                {"Fn::Join": ["",[ {"Fn::GetAtt": ["SimpleAWSS3BuildDeployArtefacts", "Arn"]},"/*" ]]}],
+              "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:GetObjectVersion",
+                "s3:GetBucketAcl",
+                "s3:GetBucketLocation"
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "codebuild:CreateReportGroup",
+                "codebuild:CreateReport",
+                "codebuild:UpdateReport",
+                "codebuild:BatchPutTestCases",
+                "codebuild:BatchPutCodeCoverages"
+              ],
+              "Resource": [
+                {
+                  "Fn::GetAtt": ["PipelineLogs","Arn"]
+                }
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": ["PipelineLogs","Arn"]
+                }
+              ],
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ]
+            }
+          ]
+        },
+        "PolicyName": "CodeBuildPolicyRequirements",
+        "Roles": [
+          {
+            "Ref": "ServiceRoleForCodeBuild"
           }
         ]
       }
@@ -155,7 +229,6 @@
                 "elasticloadbalancing:*",
                 "autoscaling:*",
                 "cloudwatch:*",
-                "s3:*",
                 "sns:*",
                 "cloudformation:*",
                 "rds:*",
@@ -163,6 +236,13 @@
                 "ecs:*"
               ],
               "Resource": "*",
+              "Effect": "Allow"
+            },
+            {
+              "Action": [
+                "s3:*"
+              ],
+              "Resource": {"Fn::GetAtt": ["SimpleAWSS3BuildDeployArtefacts", "Arn"]},
               "Effect": "Allow"
             },
             {
@@ -368,6 +448,23 @@
       }
     },
     
+    "ServiceRoleForCodeBuild": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "codebuild.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        }
+      }
+    },
     "ServiceRoleForCodeDeploy": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -421,10 +518,17 @@
       }
     },
     "ServiceRoleForCodeDeploy":{
-      "Description": "Code Deploy Service Role to access S3 Read/Write",
-      "Value": {"Ref": "ServiceRoleForCodeDeploy"},
-      "Export": {
+        "Description": "Code Deploy Service Role to access S3 Read/Write",
+        "Value": {"Ref": "ServiceRoleForCodeDeploy"},
+        "Export": {
         "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "ServiceRoleForCodeDeploy"]]}
+      }
+    },
+    "ServiceRoleForCodeBuild":{
+        "Description": "Code Build Service Role to access S3 Read/Write",
+        "Value": {"Ref": "ServiceRoleForCodeBuild"},
+        "Export": {
+        "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "ServiceRoleForCodeBuild"]]}
       }
     },
     "ServiceRoleForCodePipeline":{
