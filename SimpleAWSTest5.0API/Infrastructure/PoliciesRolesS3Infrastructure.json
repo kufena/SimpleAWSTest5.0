@@ -248,7 +248,8 @@
               "Action": [
                 "s3:*"
               ],
-              "Resource": {"Fn::GetAtt": ["SimpleAWSS3BuildDeployArtefacts", "Arn"]},
+              "Resource": [{"Fn::GetAtt": ["SimpleAWSS3BuildDeployArtefacts", "Arn"]},
+                {"Fn::Join": ["",[ {"Fn::GetAtt": ["SimpleAWSS3BuildDeployArtefacts", "Arn"]},"/*" ]]}],
               "Effect": "Allow"
             },
             {
