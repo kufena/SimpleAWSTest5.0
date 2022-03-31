@@ -4,11 +4,14 @@
     "RolesStack": {
       "Type": "String",
       "Description": "Stack for Roles and Policies and Artefact Bucket."
+    },
+    "EC2Stack": {
+      "Type": "String",
+      "Description": "Stack for various EC2 artefacts like load balancer and autoscaling group."
     }
   },
   "Resources": {
-    
-    "CodeBuildProject" : {
+    "CodeBuildProject": {
       "Type": "AWS::CodeBuild::Project",
       "Properties": {
         "Artifacts": {
@@ -20,22 +23,34 @@
         },
         "Environment": {
           "ComputeType": "BUILD_GENERAL1_SMALL",
-          "Image": "aws/codebuild/docker:17.09.0",
+          "Image": "aws/codebuild/standard:5.0",
+          "ImagePullCredentialsType": "CODEBUILD",
           "Type": "LINUX_CONTAINER"
         },
         "Name": "CodeBuildProject",
-        "ServiceRole": {"Fn::ImportValue" :  {"Fn::Sub": "${RolesStack}-ServiceRoleForCodeBuild"}},
+        "ServiceRole": {
+          "Fn::ImportValue": {
+            "Fn::Sub": "${RolesStack}-ServiceRoleForCodeBuildARN"
+          }
+        },
         "LogsConfig": {
           "CloudWatchLogs": {
             "Status": "ENABLED",
-            "GroupName": {"Fn::ImportValue" :  {"Fn::Sub": "${RolesStack}-SimpleAWSPipelineLogs"}}
+            "GroupName": {
+              "Fn::ImportValue": {
+                "Fn::Sub": "${RolesStack}-SimpleAWSPipelineLogs"
+              }
+            }
           }
         }
       }
     },
-    
-    "CodeDeployApplication" : {
-      "Type": "AWS::CodeDeploy::Application"
+    "CodeDeployApplication": {
+      "Type": "AWS::CodeDeploy::Application",
+      "Properties": {
+        "ApplicationName": "SimpleAWSTestCodeDeployApplication",
+        "ComputePlatform": "Server"
+      }
     },
     "CodeDeployGroup": {
       "Type": "AWS::CodeDeploy::DeploymentGroup",
@@ -43,20 +58,46 @@
         "ApplicationName": {
           "Ref": "CodeDeployApplication"
         },
-        "ServiceRoleArn": {"Fn::ImportValue" :  {"Fn::Sub": "${RolesStack}-ServiceRoleForCodeDeploy"}}
+        "ServiceRoleArn": {
+          "Fn::ImportValue": {
+            "Fn::Sub": "${RolesStack}-ServiceRoleForCodeDeployARN"
+          }
+        },
+        "AutoScalingGroups": [
+          {
+            "Fn::ImportValue": {
+              "Fn::Sub": "${EC2Stack}-SimpleAWSTestAutoScalingGroup"
+            }
+          }
+        ],
+        "LoadBalancerInfo": {
+          "TargetGroupInfoList": [
+            {
+              "Name": {
+                "Fn::ImportValue": {
+                  "Fn::Sub": "${EC2Stack}-SimpleAWSTestTargetGroup"
+                }
+              }
+            }
+          ]
+        }
       }
     },
-    
     "AppPipeline": {
       "Type": "AWS::CodePipeline::Pipeline",
       "Properties": {
-        "RoleArn": {"Fn::ImportValue" :  {"Fn::Sub": "${RolesStack}-ServiceRoleForCodePipeline"}},
+        "RoleArn": {
+          "Fn::ImportValue": {
+            "Fn::Sub": "${RolesStack}-ServiceRoleForCodePipelineARN"
+          }
+        },
+        "Name": "SimpleAWSTestCodePipeline",
         "Stages": [
           {
             "Name": "Source",
             "Actions": [
               {
-                "Name": "SourceAction",
+                "Name": "SourceStageAction1",
                 "InputArtifacts": [],
                 "ActionTypeId": {
                   "Category": "Source",
@@ -81,55 +122,73 @@
           },
           {
             "Name": "Build",
-            "ActionTypeId": {
-              "Category": "Build",
-              "Owner": "AWS",
-              "Version": "1",
-              "Provider": "CodeBuild"
-            },
-            "RunOrder": 2,
-            "Configuration": {
-              "BatchEnabled": "true",
-              "CombineArtifacts": "true",
-              "ProjectName": "my-build-project",
-              "PrimarySource": "PrimarySourceOutput"
-            },
-            "OutputArtifacts": [
+            "Actions": [
               {
-                "Name": "PrimaryBuildOutput"
-              }
-            ],
-            "InputArtifacts": [
-              {
-                "Name": "PrimarySourceOutput"
+                "Name": "BuildStageAction1",
+                "ActionTypeId": {
+                  "Category": "Build",
+                  "Owner": "AWS",
+                  "Version": "1",
+                  "Provider": "CodeBuild"
+                },
+                "RunOrder": 2,
+                "Configuration": {
+                  "BatchEnabled": "true",
+                  "CombineArtifacts": "true",
+                  "ProjectName": "my-build-project",
+                  "PrimarySource": "PrimarySourceOutput"
+                },
+                "OutputArtifacts": [
+                  {
+                    "Name": "PrimaryBuildOutput"
+                  }
+                ],
+                "InputArtifacts": [
+                  {
+                    "Name": "PrimarySourceOutput"
+                  }
+                ]
               }
             ]
           },
           {
             "Name": "Deploy",
-            "ActionTypeId": {
-              "Category": "Deploy",
-              "Owner": "AWS",
-              "Version": "1",
-              "Provider": "CodeDeploy"
-            },
-            "RunOrder": 3,
-            "Configuration": {
-              "AppicationName": {"Ref": "CodeDeployApplication"},
-              "DeploymentConfiguration": {"Ref": "CodeDeployGroup"}
-            },
-            "InputArtifacts": [{
-              "Name": "PrimaryBuildOutput"
-            }]
+            "Actions": [
+              {
+                "Name": "DeployStageAction1",
+                "ActionTypeId": {
+                  "Category": "Deploy",
+                  "Owner": "AWS",
+                  "Version": "1",
+                  "Provider": "CodeDeploy"
+                },
+                "RunOrder": 3,
+                "Configuration": {
+                  "ApplicationName": {
+                    "Ref": "CodeDeployApplication"
+                  },
+                  "DeploymentGroupName": {
+                    "Ref": "CodeDeployGroup"
+                  }
+                },
+                "InputArtifacts": [
+                  {
+                    "Name": "PrimaryBuildOutput"
+                  }
+                ]
+              }
+            ]
           }
         ],
-        
         "ArtifactStore": {
           "Type": "S3",
           "Location": {
-            "Ref": "ArtifactStoreS3Location"
+            "Fn::ImportValue": {
+              "Fn::Sub": "${RolesStack}-SimpleAWSS3BuildDeployArtefacts"
+            }
           }
         }
       }
     }
   }
+}

@@ -71,5 +71,28 @@
                               {"Fn::ImportValue" :  {"Fn::Sub": "${VPCStack}-Subnet2"}}]
       }
     }
+  },
+  "Outputs": {
+    "SimpleAWSTestAutoScalingGroup":{
+      "Description": "AutoScalingGroup",
+      "Value": {"Ref": "SimpleAWSTestAutoScalingGroup"},
+      "Export": {
+        "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "SimpleAWSTestAutoScalingGroup"]]}
+      }
+    },
+    "SimpleAWSTestTargetGroup":{
+      "Description": "SimpleAWSTest TargetGroup",
+      "Value": {"Fn::GetAtt": ["SimpleAWSTestTargetGroup","TargetGroupName"]},
+      "Export": {
+        "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "SimpleAWSTestTargetGroup"]]}
+      }
+    },
+    "SimpleAWSTestApplicationLoadBalancer":{
+      "Description": "SimpleAWSTest ApplicationLoadBalancer",
+      "Value": {"Fn::GetAtt": ["SimpleAWSTestApplicationLoadBalancer","LoadBalancerName"]},
+      "Export": {
+        "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "SimpleAWSTestApplicationLoadBalancer"]]}
+      }
+    }    
   }
 }

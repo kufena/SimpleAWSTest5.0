@@ -533,16 +533,16 @@
       }
     },
     "ServiceRoleForCodeDeploy":{
-        "Description": "Code Deploy Service Role to access S3 Read/Write",
-        "Value": {"Ref": "ServiceRoleForCodeDeploy"},
-        "Export": {
+      "Description": "Code Deploy Service Role to access S3 Read/Write",
+      "Value": {"Ref": "ServiceRoleForCodeDeploy"},
+      "Export": {
         "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "ServiceRoleForCodeDeploy"]]}
       }
     },
     "ServiceRoleForCodeBuild":{
-        "Description": "Code Build Service Role to access S3 Read/Write",
-        "Value": {"Ref": "ServiceRoleForCodeBuild"},
-        "Export": {
+      "Description": "Code Build Service Role to access S3 Read/Write",
+      "Value": {"Ref": "ServiceRoleForCodeBuild"},
+      "Export": {
         "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "ServiceRoleForCodeBuild"]]}
       }
     },
@@ -551,6 +551,27 @@
       "Value": {"Ref": "ServiceRoleForCodePipeline"},
       "Export": {
         "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "ServiceRoleForCodePipeline"]]}
+      }
+    },
+    "ServiceRoleForCodeDeployARN":{
+      "Description": "Code Deploy Service Role to access S3 Read/Write",
+      "Value": {"Fn::GetAtt": ["ServiceRoleForCodeDeploy","Arn"]},
+      "Export": {
+        "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "ServiceRoleForCodeDeployARN"]]}
+      }
+    },
+    "ServiceRoleForCodeBuildARN":{
+      "Description": "Code Build Service Role to access S3 Read/Write",
+      "Value": {"Fn::GetAtt": ["ServiceRoleForCodeBuild","Arn"]},
+      "Export": {
+        "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "ServiceRoleForCodeBuildARN"]]}
+      }
+    },
+    "ServiceRoleForCodePipelineARN":{
+      "Description": "Code Pipeline Service Role",
+      "Value": {"Fn::GetAtt": ["ServiceRoleForCodePipeline","Arn"]},
+      "Export": {
+        "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "ServiceRoleForCodePipelineARN"]]}
       }
     },
     "ServiceRoleForEC2InstancesInstanceProfile": {
