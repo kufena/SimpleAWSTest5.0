@@ -23,8 +23,14 @@
           "Image": "aws/codebuild/docker:17.09.0",
           "Type": "LINUX_CONTAINER"
         },
-        "Name": "!Ref AWS::StackName",
-        "ServiceRole": "!Ref CodeBuildServiceRole"
+        "Name": "CodeBuildProject",
+        "ServiceRole": {"Fn::ImportValue" :  {"Fn::Sub": "${RolesStack}-ServiceRoleForCodeBuild"}},
+        "LogsConfig": {
+          "CloudWatchLogs": {
+            "Status": "ENABLED",
+            "GroupName": {"Fn::ImportValue" :  {"Fn::Sub": "${RolesStack}-SimpleAWSPipelineLogs"}}
+          }
+        }
       }
     },
     
@@ -37,16 +43,14 @@
         "ApplicationName": {
           "Ref": "CodeDeployApplication"
         },
-        "ServiceRoleArn": {
-          "Ref": "CodeDeployServiceRoleARN"
-        }
+        "ServiceRoleArn": {"Fn::ImportValue" :  {"Fn::Sub": "${RolesStack}-ServiceRoleForCodeDeploy"}}
       }
     },
     
     "AppPipeline": {
       "Type": "AWS::CodePipeline::Pipeline",
       "Properties": {
-        "RoleArn": "arn:aws:iam::780487234683:policy/service-role/AWSCodePipelineServiceRole-eu-west-2-dotNetPipeline",
+        "RoleArn": {"Fn::ImportValue" :  {"Fn::Sub": "${RolesStack}-ServiceRoleForCodePipeline"}},
         "Stages": [
           {
             "Name": "Source",
@@ -111,8 +115,8 @@
             },
             "RunOrder": 3,
             "Configuration": {
-              "AppicationName": "",
-              "DeploymentConfiguration": ""
+              "AppicationName": {"Ref": "CodeDeployApplication"},
+              "DeploymentConfiguration": {"Ref": "CodeDeployGroup"}
             },
             "InputArtifacts": [{
               "Name": "PrimaryBuildOutput"

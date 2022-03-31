@@ -7,12 +7,14 @@
         "BucketName": "simpleawss3builddeployartefacts"
       }
     },
+    
     "PipelineLogs": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
         "LogGroupName": "SimpleAWSTest50BuildDeployPipelineLogs"
       }
     },
+    
     "S3ArtefactAccessPolicy": {
       "Type": "AWS::IAM::Policy",
       "Properties": {
@@ -39,6 +41,7 @@
         ]
       }
     },
+    
     "S3ArtefactAccessPolicyFuller": {
       "Type": "AWS::IAM::Policy",
       "Properties": {
@@ -66,6 +69,7 @@
         ]
       }
     },
+    
     "ParameterStoreAccess": {
       "Type": "AWS::IAM::Policy",
       "Properties": {
@@ -99,6 +103,7 @@
         ]
       }
     },
+    
     "CodeBuildPolicyRequirements": {
       "Type": "AWS::IAM::Policy",
       "Properties": {
@@ -168,6 +173,7 @@
         ]
       }
     },
+    
     "CodePipelinePolicyRequirements": {
       "Type": "AWS::IAM::Policy",
       "Properties": {
@@ -358,6 +364,7 @@
         ]
       }
     },
+    
     "SomePoliciesForCodeDeploy": {
       "Type": "AWS::IAM::Policy",
       "Properties": {
@@ -417,6 +424,7 @@
         ]
       }
     },
+    
     "ServiceRoleForEC2Instances": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -508,6 +516,13 @@
       "Value": {"Ref": "SimpleAWSS3BuildDeployArtefacts"},
       "Export": {
         "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "SimpleAWSS3BuildDeployArtefacts"]]}
+      }
+    },
+    "SimpleAWSPipelineLogs":{
+      "Description": "S3 Artefact Bucket.",
+      "Value": {"Ref": "PipelineLogs"},
+      "Export": {
+        "Name": { "Fn::Join" :  [ "-", [{"Ref": "AWS::StackName"}, "SimpleAWSPipelineLogs"]]}
       }
     },
     "ServiceRoleForEC2Instances":{
