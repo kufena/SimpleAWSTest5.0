@@ -133,10 +133,9 @@
                 },
                 "RunOrder": 2,
                 "Configuration": {
-                  "BatchEnabled": "true",
-                  "CombineArtifacts": "true",
-                  "ProjectName": "my-build-project",
-                  "PrimarySource": "PrimarySourceOutput"
+                  "BatchEnabled": "false",
+                  "CombineArtifacts": "false",
+                  "ProjectName": "CodeBuildProject"
                 },
                 "OutputArtifacts": [
                   {
