@@ -14,11 +14,16 @@ In this root directory, you'll find this Readme.md file, as well as some other b
 The SimpleAWSTest5.0API project contains the usual stuff required for a .NET 5 ASP.NET application, together with an Infrastructure directory containing the CloudFormation files.
 There is a Read Me file here to tell you what to do.
 
-This is not complete, at present.  Things to do include:
+There's an Infrastructure folder in the project that builds all the requirements for the 
+project itself.  In this root folder, there's build artefacts required for deployment to EC2.
+There is also a Code Pipeline infrastructure json template.
+You can use the template like this:
 
-- Move and complete the CodePipelineInfrastructure.json file, so we can set up the codepipeline easily.
-- Write CloudFormation templates for all Policies and Roles we use, together with creating the artefact S3 bucket and stuff.
-- Fix some issues surround the SecurityGroup and TargetGroup rules - I don't think the EC2 instances need to be so public, so the instances can allow traffic from the Load Balancer only (or at least the CIDR block for the VPC).  This means the Load Balancer will need a Security Group for external access.  Of course, we'll still need ssh access to the instances.
+    aws cloudformation create-stack --stack-name SimpleAWSTestCodePipeline --template-body file://../../CodePipelineInfrastructure.json --parameters ParameterKey=RolesStack,ParameterValue=SimpleAWSTestRolesandPolicies ParameterKey=EC2Stack,ParameterValue=SimpleAWSTestEC2Stack --on-failure DO_NOTHING
+
+The only hard-coded thing, at the moment, is the ARN to my GitHub connection, and the name of the repository and the branch.
+Otherwise, it should be fairly complete.  The artefact S3 bucket is created in the Policies and Roles stack.
+
 
 ## CodeBuild local instructions. ##
 
