@@ -34,7 +34,8 @@ namespace SimpleAWSTest5._0API.Controllers
                 fromConfig = _parameters.Value.SomeParameter,
                 hostName = System.Environment.MachineName,
                 date = r.ToLongDateString(),
-                time = r.ToLongTimeString() 
+                time = r.ToLongTimeString(),
+                message="Hello World!"
             });
         }
     }
